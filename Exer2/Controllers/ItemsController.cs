@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Exer2;
+using Exer2.Models;
 
 namespace Exer2.Controllers
 {
@@ -130,8 +131,13 @@ namespace Exer2.Controllers
                 .Select(g => new { ItemID = g.Key, TotalQuantity = g.Sum(od => od.Quantity) })
                 .OrderByDescending(x => x.TotalQuantity)
                 .Take(5)
-                .Join(db.Items, x => x.ItemID, i => i.ItemID, (x, i) => new { i.ItemName, x.TotalQuantity })
+                .Join(db.Items, x => x.ItemID, i => i.ItemID, (x, i) => new BestItemViewModel
+                {
+                    ItemName = i.ItemName,
+                    TotalQuantity = x.TotalQuantity
+                })
                 .ToList();
+
             return View(bestItems);
         }
     }
